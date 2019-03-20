@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    RED.nodes.registerType(
+        'ICCommunitiesWidgetsGet',
+        {
+            category: "IBMsocial",
+            inputs: 1,
+            outputs:1,
+            icon: "ibmconnections.png",
+            color: "#FFFFFF",
+            label: function() {
+                    return this.name ||'Get Communities Widgets';
+                    },
+            paletteLabel : "Get Communities Widgets",
+                name: {
+                            value: ""
+                },
+                server: {
+                            value : "",
+                            required: true,
+                            type: "ICLogin2"
+                },
+                target: {
+                            value : "AllWidgets",
+                            required: true
+                },
+                communityId: {
+                            value : "",
+                            required: false
+                },
+                widgetId: {
+                            value : "",
+                            required: false
+                },
+                widgetName: {
+                            value : "",
+                            required: false
+                },
+            },
+            oneditprepare: updateFormCommunitiesWidgetsGet
+        });
+
+    function updateFormCommunitiesWidgetsGet() {
+        
+    }
