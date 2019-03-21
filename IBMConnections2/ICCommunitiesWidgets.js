@@ -1,6 +1,6 @@
 module.exports = function (RED) {
 
-    function ICCommunitiesGet(config) {
+    function ICCommunitiesWidgetsGet(config) {
         RED.nodes.createNode(this, config);
         //
         //  Global to access the custom HTTP Request object available from the
@@ -9,7 +9,6 @@ module.exports = function (RED) {
         this.login = RED.nodes.getNode(config.server);
 		var node = this;
 
-        var mailExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         var xml2js = require("xml2js");
         var parser = new xml2js.Parser();
 
@@ -52,10 +51,10 @@ module.exports = function (RED) {
                     headers: {"Content-Type": "application/atom+xml"}
                 },
                 function (error, response, body) {
-                    console.log('getCommunityList: executing on ' + theURL);
+                    console.log('getCommunityWidgetsList: executing on ' + theURL);
                     if (error) {
-                        console.log("getCommunityList : error getting information for CommunityList !");
-                        node.status({fill: "red", shape: "dot", text: "No CommunityList"});
+                        console.log("getCommunityWidgetsList : error getting information for CommunityWidgetList !");
+                        node.status({fill: "red", shape: "dot", text: "No CommunityWidgetList"});
                         node.error(error.toString(), theMsg);
                     } else {
                         if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -68,18 +67,27 @@ module.exports = function (RED) {
                                 if (err) {
                                     console.log(err);
                                     node.status({fill: "red", shape: "dot", text: "Parser Error"});
-                                    node.error("Parser Error getCommunityList", theMsg);
+                                    node.error("Parser Error getCommunityWidgetList", theMsg);
                                     return;
                                 }
                                 var myData = new Array();
-                                if (result.feed.entry) {
-                                    for (i = 0; i < result.feed.entry.length; i++) {
-                                        myData.push(parseAtomEntry(result.feed.entry[i], true));
+                                if (result.feed) {
+                                    if (result.feed.entry) {
+                                        for (let i = 0; i < result.feed.entry.length; i++) {
+                                            myData.push(parseAtomEntry(result.feed.entry[i], true));
+                                        }
+                                        node.status({});
+                                    } else {
+                                        console.log('getCommunityList: No ENTRY found for URL : ' + theURL);
+                                        node.status({fill: "red", shape: "dot", text: "No Entry "});
                                     }
-                                    node.status({});
                                 } else {
-                                    console.log('getCommunityList: No ENTRY found for URL : ' + theURL);
-                                    node.status({fill: "red", shape: "dot", text: "No Entry "});
+                                    if (result.entry) {
+                                        myData.push(parseAtomEntry(result.entry, true));
+                                    } else {
+                                        console.log('getCommunityList: No ENTRY found for URL : ' + theURL);
+                                        node.status({fill: "red", shape: "dot", text: "No Entry "});
+                                    }
                                 }
                                 theMsg.payload = myData;
                                 node.send(theMsg);
@@ -115,9 +123,9 @@ module.exports = function (RED) {
                     theCommunity = "?communityUuid=" + msg.communityId.trim();
                 }
                 if (config.widgetId != '') {
-                    theWidgetId = '&widgetInstanceId="' + config.widgetId.trim() + '"';
+                    theWidgetId = '&widgetInstanceId=' + config.widgetId.trim();
                 } else if ((msg.widgetId != undefined) && (msg.widgetId != '')) {
-                    theWidgetId = '&widgetInstanceId="' + msg.widgetId.trim() + '"';
+                    theWidgetId = '&widgetInstanceId=' + msg.widgetId.trim();
                 }
                 if (config.widgetDefIds != '') {
                     theWidgetDefIds = config.widgetDefIds.split(',');
@@ -125,7 +133,7 @@ module.exports = function (RED) {
                     theWidgetDefIds = msg.widgetDefIds.split(',');
                 }
                 for (let k = 0; k < theWidgetDefIds.length; k++) {
-                    theWidgetQuery += 'widgetDefId=' + theWidgetDefIds[k].trim();
+                    theWidgetQuery += '&widgetDefId=' + theWidgetDefIds[k].trim();
                 }
 
                 node.status({fill: "blue", shape: "dot", text: "Retrieving..."});
@@ -151,7 +159,7 @@ module.exports = function (RED) {
                                 node.status({fill: "red", shape: "dot", text: "Missing widgetId"});
                                 node.error('Missing widgetId', msg);
                             } else {
-                                myURL += '&' + theWidgetId;
+                                myURL += theWidgetId;
                                 getWidgetList(msg, myURL);
                             }
                             break;
@@ -164,7 +172,7 @@ module.exports = function (RED) {
                                 node.status({fill: "red", shape: "dot", text: "Missing widgetDefIds"});
                                 node.error('Missing widgetDefIds', msg);
                             } else {
-                                myURL += "&" + theWidgetQuery;
+                                myURL += theWidgetQuery;
                                 getWidgetList(msg, myURL);
                             }
                             break;
@@ -174,6 +182,6 @@ module.exports = function (RED) {
         );
     }
 
-    RED.nodes.registerType("ICCommunitiesGet", ICCommunitiesGet);
+    RED.nodes.registerType("ICCommunitiesWidgetsGet", ICCommunitiesWidgetsGet);
 
 };
