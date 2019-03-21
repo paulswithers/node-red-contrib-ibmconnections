@@ -11,6 +11,7 @@
                     return this.name ||'Get Communities Widgets';
                     },
             paletteLabel : "Get Communities Widgets",
+            defaults : {
                 name: {
                             value: ""
                 },
@@ -31,7 +32,7 @@
                             value : "",
                             required: false
                 },
-                widgetName: {
+                widgetDefIds: {
                             value : "",
                             required: false
                 },
@@ -40,5 +41,95 @@
         });
 
     function updateFormCommunitiesWidgetsGet() {
-        
+       switch (document.querySelector("#node-input-target").value) {
+           case "AllWidgets" :
+               document.querySelector("#widgetIdRow").style.display = "none";
+               document.querySelector("#widgetDefIdsRow").style.display = "none";
+               break;
+           case "ById" :
+               document.querySelector("#widgetIdRow").style.display = "inline";
+               document.querySelector("#widgetDefIdsRow").style.display = "none";
+               break;
+           case "ByDefIds" :
+               document.querySelector("#widgetIdRow").style.display = "none";
+               document.querySelector("#widgetDefIdsRow").style.display = "inline";
+               break;
+       }
     }
+
+</script>    
+
+<script type="text/x-red" data-template-name="ICCommunitiesWidgetsGet">
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-target"><i class="fa fa-arrow-circle-right"></i> Get</label>
+        <select id="node-input-target" onchange="updateFormCommunitiesWidgetsGet()">
+	       <option value="AllWidgets">All Widgets</option>
+	       <option value="ById">Widget By Id</option>
+	       <option value="ByDefIds">Widgets By Name</option>
+        </select>
+        <br />
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-communityId"><i class="fa fa-users"></i> CommunityId</label>
+        <input type="text" id="node-input-communityId" placeholder="ID"></input>
+        <br />
+    </div>
+
+    <div class="form-row" id="widgetIdRow">
+        <label for="node-input-widgetId"><i class="fa fa-id-card"></i> WidgetId</label>
+        <input type="text" id="node-input-widgetId" placeholder="WidgetID"></input>
+        <br />
+    </div>
+
+    <div class="form-row" id="widgetDefIdsRow">
+        <label for="node-input-widgetDefIds"><i class="fa fa-odnoklassniki"></i> WidgetDefId</label>
+        <input type="text" id="node-input-widgetDefIds" placeholder="WidgetDefIds, comma-separated list"></input>
+        <br />
+    </div>
+
+    <br />
+
+    <div class="form-row">
+        <hr />
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</span></label>
+        <input type="text" id="node-input-name" ></input>
+    </div>
+
+ </script>
+
+ <script type="text/x-red" data-help-name="ICCommunitiesWidgetsGet">
+    <p>Retrieves a list of Community Widgets based on selection criteria.</p>
+    <p>It can retrieve:
+    <ul>
+    <li><b>All Widgets in a Community/b></li>
+    <li><b>A Widget in a Community, defined by the WidgetInstanceId</b></li>
+    <li><b>One or more Widgets in a Community, defined by a comma-separted list of WidgetDefIds</b></li>
+    </ul>
+    </p>
+    <p><i>Inputs:</i>
+    <ul>
+        <li><code>msg.communityId</code> : the ID of the community in which to retrieve widgets.</li>
+        <li><code>msg.widgetId</code> : if set, the WidgetInstanceId of the widget to retrieve. <b>NOTE : </b>the option "Widget By Id" in the configuration panel needs to be selected for this parameter to be taken in consideration</li>
+        <li><code>msg.communityId</code> : if set, the WidgetDefIds of one or more widgets to retrieve. They should be entered comma-searated. <b>NOTE : </b>the option "Widget By Id" in the configuration panel needs to be selected for this parameter to be taken in consideration</li>
+    </ul></p>
+    <p><i>Returns:</i>
+    <ul>
+    <li><code>msg.payload</code>. An array of objects where each object has the following properties:
+    <ul>
+        <li><b>title</b> the title of the retrieved Widget</li>
+        <li><b>defId</b> the WidgetDefId of the retrieved Widget</li>
+        <li><b>instanceId</b> the WidgetInstanceId of the retrieved Widget</li>
+        <li><b>ref</b> the href for the <i>self</i> link</li>
+        <li><b><hidden</b> whether or not the widget is hidden</li>
+        <li><b>entry</b> the ATOM representation of the widgets</li>
+    </ul>
+    The Array is empty in case no Community or Widget(s) is found.
+    </li>
+    </p>
+ </script>
