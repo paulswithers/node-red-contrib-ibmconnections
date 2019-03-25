@@ -24,6 +24,7 @@
             "Activities": "IBMConnections2/ICActivities.js",
             "Forums": "IBMConnections2/ICForums.js",
             "Communities": "IBMConnections2/ICCommunities.js",
+            "CommunitiesWidgets": "IBMConnections2/ICCommunitiesWidgets.js",
             "EmbeddedExp": "IBMConnections2/ICEmbeddedExp.js",
             "Profiles": "IBMConnections2/ICProfiles.js",
             "Files": "IBMConnections2/ICFiles.js",
