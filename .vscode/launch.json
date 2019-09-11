@@ -19,6 +19,7 @@
             "request": "attach",
             "name": "Attach to Process",
             "processId": "${command:PickProcess}"
+            //"port": 12345
         }
     ]
 }

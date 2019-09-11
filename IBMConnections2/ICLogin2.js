@@ -292,6 +292,10 @@ module.exports = function(RED) {
         if (serverType === "cloud") {
             if (cloudServer === "europe") {
                 fmtServer = "https://apps.ce.collabserv.com";
+            } else if (cloudServer === "scniris") {
+                fmtServer = "https://apps.scniris.com";
+            } else if (cloudServer === "devworks") {
+                fmtServer = "https://www.ibm.com/developerworks/community";
             } else {
                 fmtServer = "https://apps.na.collabserv.com";
             }
